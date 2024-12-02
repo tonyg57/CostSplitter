@@ -1,14 +1,16 @@
+# Split3Cost.py
+# Updated 17-OCT-2024
+
 import itertools
 
-# Define the list of motel costs
+# Define the list of motel costs - Make sure these have unique names!
 motel_costs = {
-    "Morro Bay": 202.58,
-    "San Rafael": 246.38,
-    "Fort Bragg": 152.52,
-    "So. Lake Tahoe": 252.44,
-    "June Lake": 288.96,
-    "Sanger": 200.78,
-    "Kernville": 153.10
+    "Santa Maria": 140,
+    "Fresno": 136,
+    "Oakhurst": 178,
+    "Sonora": 167,
+    "Visalia": 182,
+    "Kernville": 143
 }
 
 # Calculate the total cost
@@ -54,42 +56,24 @@ print(f"Total amount Gary pays: ${gary_cost:.2f}")
 print(f"Total amount Bill pays: ${bill_cost:.2f}")
 print(f"Total amount Tony pays: ${tony_cost:.2f}")
 
-if gary_cost > bill_cost and gary_cost > tony_cost:
-    if bill_cost - ideal_split < 0:
-        print(f"Bill owes ${abs(bill_cost - ideal_split):.2f} to Gary")
-    else:
-        print(f"Gary owes ${bill_cost - ideal_split:.2f} to Bill")
-    
-    if tony_cost - ideal_split < 0:
-        print(f"Tony owes ${abs(tony_cost - ideal_split):.2f} to Gary")
-    else:
-        print(f"Gary owes ${tony_cost - ideal_split:.2f} to Tony")
+# Calculate the amounts owed
+amounts_owed = {
+    "Gary": gary_cost - ideal_split,
+    "Bill": bill_cost - ideal_split,
+    "Tony": tony_cost - ideal_split,
+}
 
-elif bill_cost > gary_cost and bill_cost > tony_cost:
-    if gary_cost - ideal_split < 0:
-        print(f"Gary owes ${abs(gary_cost - ideal_split):.2f} to Bill")
-    else:
-        print(f"Bill owes ${gary_cost - ideal_split:.2f} to Gary")
-    
-    if tony_cost - ideal_split < 0:
-        print(f"Tony owes ${abs(tony_cost - ideal_split):.2f} to Bill")
-    else:
-        print(f"Bill owes ${tony_cost - ideal_split:.2f} to Tony")
-
-elif tony_cost > gary_cost and tony_cost > bill_cost:
-    if gary_cost - ideal_split < 0:
-        print(f"Gary owes ${abs(gary_cost - ideal_split):.2f} to Tony")
-    else:
-        print(f"Tony owes ${gary_cost - ideal_split:.2f} to Gary")
-    
-    if bill_cost - ideal_split < 0:
-        print(f"Bill owes ${abs(bill_cost - ideal_split):.2f} to Tony")
-    else:
-        print(f"Tony owes ${bill_cost - ideal_split:.2f} to Bill")
-
-else:
-    print(f"The costs were evenly split!")
+# Determine who owes whom
+for person, amount in amounts_owed.items():
+    if amount < 0:  # This person owes money
+        for creditor, creditor_amount in amounts_owed.items():
+            if creditor != person and creditor_amount > 0:  # The creditor is owed money
+                owed_amount = min(abs(amount), creditor_amount)
+                print(f"{person} owes ${owed_amount:.2f} to {creditor}")
+                amounts_owed[person] += owed_amount  # Adjust owed amounts
+                amounts_owed[creditor] -= owed_amount  # Adjust creditor's owed amounts
 
 exit_program = input('Press enter to quit... ')
 if exit_program == "":
     exit()
+
